@@ -27,6 +27,14 @@ function ArchiveIcon() {
   )
 }
 
+function SignOutIcon() {
+  return (
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M14 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2v-3M10 12h11m0 0-3-3m3 3-3 3" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
 function PencilIcon() {
   return (
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="shrink-0 text-paper/40 group-focus-within:text-brass-light">
@@ -82,6 +90,9 @@ export default function Header({ clubName, onClubNameChange, view, onToggleView,
           </IconButton>
           <IconButton active={view === 'archive'} onClick={() => onToggleView('archive')} title="Archivar y limpiar sesión">
             <ArchiveIcon />
+          </IconButton>
+          <IconButton onClick={onSignOut} title="Cerrar sesión" aria-label="Cerrar sesión" className="md:hidden">
+            <SignOutIcon />
           </IconButton>
           <div className="hidden md:flex items-center gap-2 pl-2 ml-1 border-l border-paper/15">
             <span className="text-[12.5px] text-paper/50 max-w-[140px] truncate">{userEmail}</span>
