@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  background-color: #EFEAE0;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  color: #1C2620;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background-color: #C9A227;
+  color: #0F1B14;
+}
+
+/* tabular numerals for money everywhere */
+.num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* scrollbar, subtle */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(28, 38, 32, 0.18);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Printing: only the element with data-print-area is shown */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  [data-print-area], [data-print-area] * {
+    visibility: visible;
+  }
+  [data-print-area] {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+}
