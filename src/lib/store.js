@@ -53,7 +53,16 @@ export function usePokerStore(uid) {
   const removeRake = useCallback(async (id) => { const { error: e } = await supabase.from('poker_rake').delete().eq('id', id); if (e) return setError(e.message); setSession((s) => ({ ...s, rake:s.rake.filter((r) => r.id !== id) })) }, [])
   const totals = useMemo(() => { const sum = (kind) => session.movements.filter((m) => m.kind === kind).reduce((n,m) => n + Number(m.amount), 0); const ingreso=sum('entrada'), salida=sum('salida'); return { ingreso, salida, neto:ingreso-salida, rakeTotal:session.rake.reduce((n,r)=>n+Number(r.amount),0) } }, [session])
   const members = useMemo(() => new Map(session.movements.map((m) => [m.nameKey,m.name])), [session.movements])
-  const summaryByMember = useMemo(() => { const data=new Map(); session.movements.forEach((m)=>{ const row=data.get(m.nameKey)||{name:m.name,ingreso:0,salida:0}; row[m.kind]+=Number(m.amount); data.set(m.nameKey,row) }); return [...data.values()].map((r)=>({ ...r,neto:r.ingreso-r.salida })) }, [session.movements])
+  const summaryByMember = useMemo(() => {
+    const data = new Map()
+    session.movements.forEach((movement) => {
+      const row = data.get(movement.nameKey) || { name: movement.name, ingreso: 0, salida: 0 }
+      if (movement.kind === 'entrada') row.ingreso += Number(movement.amount)
+      else row.salida += Number(movement.amount)
+      data.set(movement.nameKey, row)
+    })
+    return [...data.values()].map((row) => ({ ...row, neto: row.ingreso - row.salida }))
+  }, [session.movements])
   const archiveSession = useCallback(async () => { const { error: e } = await saveSession({ archived_at:new Date().toISOString() }); if(e) return {ok:false,error:e.message}; await loadData(); return {ok:true} }, [saveSession,loadData])
   const archivedDayKeys = useMemo(() => new Set(archive.flatMap((s)=>[...(s.poker_movements||[]),...(s.poker_rake||[])].map((x)=>dateKey(x.created_at)))), [archive])
   const getDayReport = useCallback((day) => { const items=archive.flatMap((s)=>[...(s.poker_movements||[]).map(mapMovement),...(s.poker_rake||[]).map(mapRake)]).filter((x)=>dateKey(x.at)===day).map((x)=>x.name?{...x,type:x.kind==='entrada'?'Ingreso':'Salida'}:{...x,name:'Registro',kind:'registro',method:'-',type:'Registro'}).sort((a,b)=>new Date(b.at)-new Date(a.at)); const sum=(kind)=>items.filter((x)=>x.kind===kind).reduce((n,x)=>n+Number(x.amount),0), ingresos=sum('entrada'),salidas=sum('salida'),registro=sum('registro'); return {items,ingresos,salidas,registro,neto:ingresos-salidas} }, [archive])
