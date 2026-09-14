@@ -38,7 +38,22 @@ body {
 }
 
 /* Printing: only the element with data-print-area is shown */
+@page {
+  size: A4 portrait;
+  margin: 0;
+}
+
 @media print {
+  html,
+  body {
+    width: 210mm;
+    height: 297mm;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden;
+    background: #fff !important;
+  }
+
   body * {
     visibility: hidden;
   }
@@ -50,5 +65,38 @@ body {
     left: 0;
     top: 0;
     width: 100%;
+  }
+
+  /* The ticket is intentionally enlarged and kept within a single A4 page. */
+  [data-ticket-print] {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 210mm;
+    height: 296mm;
+    page-break-after: avoid;
+    break-after: avoid-page;
+  }
+
+  [data-ticket-print] > div {
+    box-sizing: border-box;
+    width: 170mm !important;
+    min-height: 220mm;
+    padding: 22mm !important;
+    border: 1px solid rgba(28, 38, 32, 0.25);
+  }
+
+  [data-ticket-print] .text-\[13px\] {
+    font-size: 15px !important;
+  }
+
+  [data-ticket-print] .text-\[17px\] {
+    font-size: 24px !important;
+  }
+
+  [data-ticket-print] .text-\[18px\] {
+    font-size: 26px !important;
   }
 }

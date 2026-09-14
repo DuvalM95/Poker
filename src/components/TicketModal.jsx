@@ -10,7 +10,7 @@ export default function TicketModal({ movement, clubName, onClose }) {
           <h3 className="font-display text-[16px] font-medium">Ticket de movimiento</h3>
           <button onClick={onClose} className="text-ink/40 hover:text-ink text-[20px] leading-none px-1">×</button>
         </div>
-        <div data-print-area>
+        <div data-print-area data-ticket-print>
           <TicketReceipt movement={movement} clubName={clubName} />
         </div>
         <div className="flex justify-end gap-2 px-5 py-3 border-t border-ink/8">
