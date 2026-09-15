@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { usePokerStore } from './lib/store.js'
 import { useAuth } from './lib/auth.js'
+import { useAdmin } from './lib/admin.js'
 import AuthScreen from './components/AuthScreen.jsx'
 import Header from './components/Header.jsx'
 import EntryForm from './components/EntryForm.jsx'
@@ -14,10 +15,12 @@ import SummaryModal from './components/SummaryModal.jsx'
 import ArchiveModal from './components/ArchiveModal.jsx'
 import TicketModal from './components/TicketModal.jsx'
 import HistoryView from './components/HistoryView.jsx'
+import AdminDashboard from './components/AdminDashboard.jsx'
 import { Button, Toast } from './components/ui.jsx'
 
 export default function App() {
-  const { user, loading: authLoading, signIn, signUp, signOut } = useAuth()
+  const { user, loading: authLoading, signIn, signOut } = useAuth()
+  const { isAdmin, loading: adminLoading } = useAdmin(user?.id)
   const store = usePokerStore(user?.id)
   const [view, setView] = useState('main') // main | history
   const [summaryOpen, setSummaryOpen] = useState(false)
@@ -26,10 +29,10 @@ export default function App() {
   const [selectedPlayer, setSelectedPlayer] = useState(null)
   const [toast, setToast] = useState(null)
 
-  if (authLoading) return null
+  if (authLoading || (user && adminLoading)) return null
 
   if (!user) {
-    return <AuthScreen signIn={signIn} signUp={signUp} />
+    return <AuthScreen signIn={signIn} />
   }
 
   function notify(message, type = 'ok') {
@@ -63,6 +66,7 @@ export default function App() {
         netoNow={store.totals.neto}
         userEmail={user.email}
         onSignOut={signOut}
+        isAdmin={isAdmin}
       />
 
       {view === 'main' ? (
@@ -108,13 +112,15 @@ export default function App() {
             </div>
           </div>
         </main>
-      ) : (
+      ) : view === 'history' ? (
         <HistoryView
           archivedDayKeys={store.archivedDayKeys}
           getDayReport={store.getDayReport}
           onBack={() => setView('main')}
         />
-      )}
+      ) : isAdmin ? (
+        <AdminDashboard onBack={() => setView('main')} />
+      ) : null}
 
       <SummaryModal
         open={summaryOpen}

@@ -35,6 +35,15 @@ function SignOutIcon() {
   )
 }
 
+function AdminIcon() {
+  return (
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="12" cy="8" r="3.2" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M5 20c.8-3.5 3.1-5.2 7-5.2s6.2 1.7 7 5.2M19 5v4m-2-2h4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  )
+}
+
 function PencilIcon() {
   return (
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="shrink-0 text-paper/40 group-focus-within:text-brass-light">
@@ -48,12 +57,12 @@ function PencilIcon() {
   )
 }
 
-export default function Header({ clubName, onClubNameChange, view, onToggleView, netoNow, userEmail, onSignOut }) {
+export default function Header({ clubName, onClubNameChange, view, onToggleView, netoNow, userEmail, onSignOut, isAdmin }) {
   return (
     <header className="relative overflow-hidden bg-felt text-paper">
       <CardSuitsBackground count={14} seed={7} minSize={14} maxSize={30} minOpacity={0.06} maxOpacity={0.14} />
 
-      <div className="relative mx-auto flex max-w-[1180px] items-center gap-4 px-5 py-4 sm:px-8">
+      <div className="relative mx-auto flex max-w-[1180px] flex-wrap items-center gap-4 px-5 py-4 sm:px-8">
         <div className="text-brass-light shrink-0">
           <SpadeIcon />
         </div>
@@ -84,7 +93,7 @@ export default function Header({ clubName, onClubNameChange, view, onToggleView,
           </div>
         )}
 
-        <div className="flex items-center gap-2">
+        <div className="ml-auto flex items-center gap-2 max-[520px]:w-full max-[520px]:justify-end">
           <IconButton active={view === 'history'} onClick={() => onToggleView('history')} title="Ver sesiones archivadas">
             <CalendarIcon />
           </IconButton>
@@ -94,6 +103,11 @@ export default function Header({ clubName, onClubNameChange, view, onToggleView,
           <IconButton onClick={onSignOut} title="Cerrar sesión" aria-label="Cerrar sesión" className="md:hidden">
             <SignOutIcon />
           </IconButton>
+          {isAdmin && (
+            <IconButton active={view === 'admin'} onClick={() => onToggleView('admin')} title="Administración" aria-label="Administración">
+              <AdminIcon />
+            </IconButton>
+          )}
           <div className="hidden md:flex items-center gap-2 pl-2 ml-1 border-l border-paper/15">
             <span className="text-[12.5px] text-paper/50 max-w-[140px] truncate">{userEmail}</span>
             <button onClick={onSignOut} className="text-[12.5px] font-medium text-brass-light hover:text-brass-light/80">

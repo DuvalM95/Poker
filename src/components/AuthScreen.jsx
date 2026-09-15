@@ -10,115 +10,45 @@ function SpadeIcon() {
   )
 }
 
-export default function AuthScreen({ signIn, signUp }) {
-  const [mode, setMode] = useState('signin') // signin | signup
+export default function AuthScreen({ signIn }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [confirm, setConfirm] = useState('')
   const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
 
-  async function submit(e) {
-    e.preventDefault()
+  async function submit(event) {
+    event.preventDefault()
     setError('')
-    setSuccess('')
-    if (mode === 'signup' && password !== confirm) {
-      setError('Las contraseñas no coinciden.')
-      return
-    }
     setLoading(true)
-    const res = mode === 'signin' ? await signIn(email, password) : await signUp(email, password)
+    const result = await signIn(email, password)
     setLoading(false)
-
-    if (!res.ok) {
-      setError(res.error || 'No se logró crear la cuenta. Intenta de nuevo.')
-      return
-    }
-
-    if (mode === 'signup') {
-      setSuccess('Cuenta creada correctamente. Ahora inicia sesión.')
-      setMode('signin')
-      setPassword('')
-      setConfirm('')
-    }
+    if (!result.ok) setError(result.error || 'No se pudo iniciar sesión.')
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-felt flex items-center justify-center px-4 py-10">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-felt px-4 py-10">
       <CardSuitsBackground />
       <div className="relative z-10 w-full max-w-sm">
-        <div className="flex flex-col items-center text-paper mb-7">
-          <div className="text-brass-light mb-2.5"><SpadeIcon /></div>
+        <div className="mb-7 flex flex-col items-center text-paper">
+          <div className="mb-2.5 text-brass-light"><SpadeIcon /></div>
           <h1 className="font-display text-[22px] font-medium tracking-tight">PokerTransfer</h1>
           <p className="text-[13px] text-paper/50">Gestión de movimientos de mesa</p>
         </div>
 
         <Card className="p-6">
-          <div className="grid grid-cols-2 rounded-lg bg-ink/6 p-1 mb-5">
-            <button
-              type="button"
-              onClick={() => { setMode('signin'); setError(''); setSuccess('') }}
-              className={`rounded-md py-2 text-[14px] font-medium transition ${mode === 'signin' ? 'bg-white shadow-card text-ink' : 'text-ink/50'}`}
-            >
-              Iniciar sesión
-            </button>
-            <button
-              type="button"
-              onClick={() => { setMode('signup'); setError(''); setSuccess('') }}
-              className={`rounded-md py-2 text-[14px] font-medium transition ${mode === 'signup' ? 'bg-white shadow-card text-ink' : 'text-ink/50'}`}
-            >
-              Registrarse
-            </button>
-          </div>
-
-          <form onSubmit={submit} className="space-y-3.5">
+          <h2 className="font-display text-[20px] font-medium">Iniciar sesión</h2>
+          <p className="mt-1 text-[13px] text-ink/50">Accede con una cuenta creada por el administrador.</p>
+          <form onSubmit={submit} className="mt-5 space-y-3.5">
             <Field label="Correo">
-              <TextInput
-                type="email"
-                required
-                autoComplete="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="tu@correo.com"
-              />
+              <TextInput type="email" required autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="tu@correo.com" />
             </Field>
             <Field label="Contraseña">
-              <TextInput
-                type="password"
-                required
-                minLength={6}
-                autoComplete={mode === 'signin' ? 'current-password' : 'new-password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-              />
+              <TextInput type="password" required autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="••••••••" />
             </Field>
-            {mode === 'signup' && (
-              <Field label="Confirmar contraseña">
-                <TextInput
-                  type="password"
-                  required
-                  minLength={6}
-                  value={confirm}
-                  onChange={(e) => setConfirm(e.target.value)}
-                  placeholder="••••••••"
-                />
-              </Field>
-            )}
-
             {error && <p className="text-[13px] text-salida">{error}</p>}
-            {success && <p className="text-[13px] text-entrada">{success}</p>}
-
-            <Button type="submit" variant="primary" className="w-full" disabled={loading}>
-              {loading ? 'Un momento…' : mode === 'signin' ? 'Iniciar sesión' : 'Crear cuenta'}
-            </Button>
+            <Button type="submit" variant="primary" className="w-full" disabled={loading}>{loading ? 'Un momento…' : 'Iniciar sesión'}</Button>
           </form>
         </Card>
-
-        <p className="text-center text-[12px] text-paper/35 mt-5">
-          Tus movimientos quedan asociados a esta cuenta.
-        </p>
       </div>
     </div>
   )

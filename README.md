@@ -31,6 +31,24 @@ No uses nunca la clave `service_role` en el frontend. La Publishable key puede
 estar en el navegador porque las políticas RLS de la migración aíslan los datos
 por usuario autenticado.
 
+## Administración de cuentas
+
+El registro público está eliminado de la aplicación. Ejecuta
+[`supabase/admin.sql`](supabase/admin.sql) en el SQL Editor y crea primero la
+cuenta del administrador desde **Authentication > Users > Add user**. Luego
+añade su correo a `poker_admins` con el comando indicado al final de ese archivo.
+
+Para habilitar el botón **Crear usuario**, despliega la función protegida:
+
+```bash
+supabase functions deploy create-poker-user
+```
+
+La función usa la `SUPABASE_SERVICE_ROLE_KEY` solo dentro de Supabase; nunca la
+copies a Render ni a variables `VITE_`. Finalmente, en **Authentication >
+Providers > Email**, desactiva **Allow new users to sign up** para bloquear
+registros realizados fuera del panel administrador.
+
 ## Deploy en Render
 
 Es un sitio estático: build command `npm run build`, publish directory `dist`.

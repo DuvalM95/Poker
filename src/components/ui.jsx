@@ -48,7 +48,7 @@ export function Button({ variant = 'primary', className = '', children, ...props
   )
 }
 
-export function IconButton({ children, active, ...props }) {
+export function IconButton({ children, active, className = '', ...props }) {
   return (
     <button
       {...props}
@@ -56,7 +56,8 @@ export function IconButton({ children, active, ...props }) {
         'grid h-10 w-10 place-items-center rounded-lg border transition ' +
         (active
           ? 'border-brass bg-brass/15 text-brass-light'
-          : 'border-paper/15 text-paper/70 hover:border-paper/30 hover:text-paper')
+          : 'border-paper/15 text-paper/70 hover:border-paper/30 hover:text-paper') +
+        ' ' + className
       }
     >
       {children}
