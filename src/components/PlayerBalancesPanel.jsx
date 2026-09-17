@@ -3,15 +3,19 @@ import { fmtMoney } from '../lib/store.js'
 
 export default function PlayerBalancesPanel({ summaryByMember, onSelectPlayer }) {
   const sorted = [...summaryByMember].sort((a, b) => Math.abs(b.neto) - Math.abs(a.neto))
+  const totalAdeudado = sorted.reduce((total, player) => total + (player.adeudo || 0), 0)
 
   return (
     <Card className="p-4 flex flex-col max-h-[220px]">
       <div className="flex items-center justify-between mb-2.5 shrink-0">
         <div>
           <h3 className="font-display text-[15px] font-medium leading-tight">Balance por jugador</h3>
-          <p className="text-[11.5px] text-ink/45">Se actualiza con cada movimiento</p>
+          <p className="text-[11.5px] text-ink/45">Toca un nombre para ver el detalle</p>
         </div>
-        <Pill tone="brass">En vivo</Pill>
+        <div className="text-right">
+          <Pill tone="brass">En vivo</Pill>
+          {totalAdeudado > 0 && <p className="mt-1 text-[11px] font-medium text-salida">Por cobrar: ${fmtMoney(totalAdeudado)}</p>}
+        </div>
       </div>
 
       <div className="overflow-auto -mx-1 px-1">
@@ -29,7 +33,10 @@ export default function PlayerBalancesPanel({ summaryByMember, onSelectPlayer })
                       className="grid w-full grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-0 px-0 text-left rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass/60"
                       title={`Ver movimientos de ${r.name}`}
                     >
-                      <span className="py-1.5 font-medium truncate max-w-[110px]">{r.name}</span>
+                      <span className="py-1.5 font-medium truncate max-w-[110px]">
+                        <span className="block truncate">{r.name}</span>
+                        {r.adeudo > 0 && <span className="block text-[10.5px] font-medium text-salida">Debe ${fmtMoney(r.adeudo)}</span>}
+                      </span>
                       <span className="py-1.5 text-right text-ink/45 num text-[11.5px]">
                         +${fmtMoney(r.ingreso)} / -${fmtMoney(r.salida)}
                       </span>

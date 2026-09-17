@@ -7,10 +7,13 @@ export default function PlayerMovementsModal({ playerName, movements, onClose })
   const playerMovements = movements.filter((movement) => movement.nameKey === playerName.toLowerCase())
   const ingreso = playerMovements
     .filter((movement) => movement.kind === 'entrada')
-    .reduce((total, movement) => total + movement.amount, 0)
+    .reduce((total, movement) => total + Number(movement.amount), 0)
   const salida = playerMovements
     .filter((movement) => movement.kind === 'salida')
-    .reduce((total, movement) => total + movement.amount, 0)
+    .reduce((total, movement) => total + Number(movement.amount), 0)
+  const adeudo = playerMovements
+    .filter((movement) => movement.kind === 'entrada' && movement.method === 'Adeudo')
+    .reduce((total, movement) => total + Number(movement.amount), 0)
   const neto = ingreso - salida
 
   return (
@@ -59,6 +62,7 @@ export default function PlayerMovementsModal({ playerName, movements, onClose })
         <div className="space-y-1.5 border-t border-ink/8 bg-paper-dim px-5 py-3">
           <div className="flex justify-between text-[13px]"><span className="text-ink/60">Ingresos</span><span className="num text-entrada">${fmtMoney(ingreso)}</span></div>
           <div className="flex justify-between text-[13px]"><span className="text-ink/60">Salidas</span><span className="num text-salida">${fmtMoney(salida)}</span></div>
+          {adeudo > 0 && <div className="flex justify-between text-[13px]"><span className="font-medium text-salida">Adeudo pendiente</span><span className="num font-medium text-salida">${fmtMoney(adeudo)}</span></div>}
           <div className="flex justify-between border-t border-ink/10 pt-1 text-[15px]"><span className="font-semibold">Balance neto</span><span className={`num font-semibold ${neto >= 0 ? 'text-entrada' : 'text-salida'}`}>{neto >= 0 ? '+' : ''}${fmtMoney(neto)}</span></div>
         </div>
         <div className="flex justify-end border-t border-ink/8 px-5 py-3"><Button variant="ghost" onClick={onClose}>Cerrar</Button></div>

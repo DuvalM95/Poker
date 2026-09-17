@@ -56,8 +56,11 @@ export function usePokerStore(uid) {
   const summaryByMember = useMemo(() => {
     const data = new Map()
     session.movements.forEach((movement) => {
-      const row = data.get(movement.nameKey) || { name: movement.name, ingreso: 0, salida: 0 }
-      if (movement.kind === 'entrada') row.ingreso += Number(movement.amount)
+      const row = data.get(movement.nameKey) || { name: movement.name, ingreso: 0, salida: 0, adeudo: 0 }
+      if (movement.kind === 'entrada') {
+        row.ingreso += Number(movement.amount)
+        if (movement.method === 'Adeudo') row.adeudo += Number(movement.amount)
+      }
       else row.salida += Number(movement.amount)
       data.set(movement.nameKey, row)
     })
